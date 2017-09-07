@@ -6,7 +6,7 @@
 
 Deis (pronounced DAY-iss) Workflow is an open source Platform as a Service (PaaS) that adds a developer-friendly layer to any [Kubernetes](http://kubernetes.io) cluster, making it easy to deploy and manage applications on your own servers.
 
-For more information about the Deis Workflow, please visit the main project page at https://github.com/deis/workflow.
+For more information about the Deis Workflow, please visit the main project page at https://github.com/deisthree/workflow.
 
 We welcome your input! If you have feedback, please submit an [issue][issues]. If you'd like to participate in development, please read the "Development" section below and submit a [pull request][prs].
 
@@ -35,15 +35,15 @@ In order to develop and test this component in a Deis cluster, you'll need the f
 
 ## Testing Your Code
 
-Once you have all the aforementioned prerequisites, you are ready to start writing code. Once you've finished building a new feature or fixed a bug, please write a unit or integration test for it if possible. See [an existing test](https://github.com/deis/postgres/blob/master/contrib/ci/test.sh) for an example test.
+Once you have all the aforementioned prerequisites, you are ready to start writing code. Once you've finished building a new feature or fixed a bug, please write a unit or integration test for it if possible. See [an existing test](https://github.com/deisthree/postgres/blob/master/contrib/ci/test.sh) for an example test.
 
-If your feature or bugfix doesn't easily lend itself to unit/integration testing, you may need to add tests at a higher level. Please consider adding a test to our [end-to-end test suite](https://github.com/deis/workflow-e2e) in that case. If you do, please reference the end-to-end test pull request in your pull request for this repository.
+If your feature or bugfix doesn't easily lend itself to unit/integration testing, you may need to add tests at a higher level. Please consider adding a test to our [end-to-end test suite](https://github.com/deisthree/workflow-e2e) in that case. If you do, please reference the end-to-end test pull request in your pull request for this repository.
 
 ### Dogfooding
 
 Finally, we encourage you to [dogfood](https://en.wikipedia.org/wiki/Eating_your_own_dog_food) this component while you're writing code on it. To do so, you'll need to build and push Docker images with your changes.
 
-This project has a [Makefile](https://github.com/deis/postgres/blob/master/Makefile) that makes these tasks significantly easier. It requires the following environment variables to be set:
+This project has a [Makefile](https://github.com/deisthree/postgres/blob/master/Makefile) that makes these tasks significantly easier. It requires the following environment variables to be set:
 
 * `DEIS_REGISTRY` - A Docker registry that you have push access to and your Kubernetes cluster can pull from
   * If this is [Docker Hub](https://hub.docker.com/), leave this variable empty
@@ -64,7 +64,7 @@ make docker-build docker-push
 Note that you'll have to push your image to a Docker repository (`make docker-push`) in order for your Kubernetes cluster to pull the image. This is important for testing in your cluster.
 
 
-[issues]: https://github.com/deis/postgres/issues
+[issues]: https://github.com/deisthree/postgres/issues
 [k8s-docs]: http://kubernetes.io/docs
-[prs]: https://github.com/deis/postgres/pulls
-[v2.18]: https://github.com/deis/workflow/releases/tag/v2.18.0
+[prs]: https://github.com/deisthree/postgres/pulls
+[v2.18]: https://github.com/deisthree/workflow/releases/tag/v2.18.0
