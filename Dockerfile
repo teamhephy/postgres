@@ -38,6 +38,7 @@ RUN buildDeps='gcc git libffi-dev libssl-dev python3-dev python3-pip python3-whe
     ln -sf /usr/bin/pip3 /usr/bin/pip && \
     mkdir -p /run/postgresql && \
     chown -R postgres /run/postgresql && \
+    pip install --upgrade setuptools && \
     pip install --disable-pip-version-check --no-cache-dir \
         envdir==0.7 \
         wal-e[aws,azure,google,swift]==v1.0.2 \
