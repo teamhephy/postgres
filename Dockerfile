@@ -2,7 +2,7 @@ FROM quay.io/deis/base:v0.3.6
 
 ENV LANG=en_US.utf8 \
     PG_MAJOR=9.4 \
-    PG_VERSION=9.4.14-1.pgdg16.04+1 \
+    PG_VERSION=9.4.17-1.pgdg16.04+1 \
     PGDATA=/var/lib/postgresql/data
 
 # Set this separately from those above since it depends on one of them
@@ -38,6 +38,8 @@ RUN buildDeps='gcc git libffi-dev libssl-dev python3-dev python3-pip python3-whe
     ln -sf /usr/bin/pip3 /usr/bin/pip && \
     mkdir -p /run/postgresql && \
     chown -R postgres /run/postgresql && \
+    # setuptools from ubuntu archives is too old for googleapis-common-protos
+    pip install --upgrade setuptools && \
     pip install --disable-pip-version-check --no-cache-dir \
         envdir==0.7 \
         wal-e[aws,azure,google,swift]==v1.0.2 \
