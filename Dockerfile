@@ -38,6 +38,7 @@ RUN buildDeps='gcc git libffi-dev libssl-dev python3-dev python3-pip python3-whe
     ln -sf /usr/bin/pip3 /usr/bin/pip && \
     mkdir -p /run/postgresql && \
     chown -R postgres /run/postgresql && \
+    # setuptools from ubuntu archives is too old for googleapis-common-protos
     pip install --upgrade setuptools && \
     pip install --disable-pip-version-check --no-cache-dir \
         envdir==0.7 \
