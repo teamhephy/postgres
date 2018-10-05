@@ -12,6 +12,7 @@ from oauth2client.service_account import ServiceAccountCredentials
 from gcloud.storage.client import Client
 from gcloud import exceptions
 from azure.storage.blob import BlobService
+from urllib.parse import urlparse
 
 def bucket_exists(conn, name):
     bucket = conn.lookup(name)
@@ -23,25 +24,22 @@ bucket_name = os.getenv('BUCKET_NAME')
 region = os.getenv('S3_REGION')
 
 if os.getenv('DATABASE_STORAGE') == "s3":
-    conn = boto.s3.connect_to_region(region)
+    if os.getenv('S3_ENDPOINT'):
+        endpoint = urlparse(os.getenv('S3_ENDPOINT'))
+        conn = boto.s3.connect_to_region(region,
+            host=endpoint.hostname,
+            port=endpoint.port,
+            path=endpoint.path,
+            calling_format=boto.s3.connection.OrdinaryCallingFormat())
+    else:
+        conn = boto.s3.connect_to_region(region)
+
     if not bucket_exists(conn, bucket_name):
-        try:
-            if region == "us-east-1":
-                # use "US Standard" region. workaround for https://github.com/boto/boto3/issues/125
-                conn.create_bucket(bucket_name)
-            else:
-                conn.create_bucket(bucket_name, location=region)
-        # NOTE(bacongobbler): for versions prior to v2.9.0, the bucket is created in the default region.
-        # if we got here, we need to propagate "us-east-1" into WALE_S3_ENDPOINT because the bucket
-        # exists in a different region and we cannot find it.
-        # TODO(bacongobbler): deprecate this once we drop support for v2.8.0 and lower
-        except S3CreateError as err:
-            if region != 'us-east-1':
-                print('Failed to create bucket in {}. We are now assuming that the bucket was created in us-east-1.'.format(region))
-                with open(os.path.join(os.environ['WALE_ENVDIR'], "WALE_S3_ENDPOINT"), "w+") as file:
-                    file.write('https+path://s3.amazonaws.com:443')
-            else:
-                raise
+        if region == "us-east-1":
+            # use "US Standard" region. workaround for https://github.com/boto/boto3/issues/125
+            conn.create_bucket(bucket_name)
+        else:
+            conn.create_bucket(bucket_name, location=region)
 
 elif os.getenv('DATABASE_STORAGE') == "gcs":
     scopes = ['https://www.googleapis.com/auth/devstorage.full_control']
