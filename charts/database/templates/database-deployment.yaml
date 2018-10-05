@@ -41,10 +41,6 @@ spec:
               value: "{{.Values.global.storage}}"
             - name: PGCTLTIMEOUT
               value: "{{.Values.postgres.timeout}}"
-{{- if eq .Values.global.storage "s3" }}
-            - name: S3_SSE
-              value: "{{.Values.s3.use_sse}}"
-{{- end}}
           lifecycle:
             preStop:
               exec:
