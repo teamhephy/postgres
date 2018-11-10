@@ -1,11 +1,11 @@
 FROM postgres:11
 
 ARG DEBIAN_FRONTEND=noninteractive
+ARG BUILD_DEPS='gcc git libffi-dev libssl-dev python3-dev python3-pip python3-wheel'
 
-RUN buildDeps='gcc git libffi-dev libssl-dev python3-dev python3-pip python3-wheel' && \
-    apt-get update && \
+RUN apt-get update && \
     apt-get install -y --no-install-recommends \
-        $buildDeps \
+        $BUILD_DEPS \
         gosu \
         lzop \
         libpq-dev \
@@ -29,7 +29,7 @@ RUN pip install --upgrade setuptools && \
         azure-storage==0.20.0
 
 # cleanup
-RUN apt-get purge -y --auto-remove $buildDeps && \
+RUN apt-get purge -y --auto-remove $BUILD_DEPS && \
     apt-get autoremove -y && \
     apt-get clean -y
 
