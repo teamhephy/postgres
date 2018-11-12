@@ -29,7 +29,7 @@ RUN pip install --upgrade setuptools && \
         azure-storage==0.20.0
 
 # cleanup
-RUN apt-get purge -y --auto-remove $buildDeps && \
+RUN apt-get purge -y --auto-remove $BUILD_DEPS && \
     apt-get autoremove -y && \
     apt-get clean -y
 
