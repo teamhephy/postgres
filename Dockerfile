@@ -36,7 +36,8 @@ RUN apt-get purge -y --auto-remove $BUILD_DEPS && \
 COPY rootfs /
 ENV WALE_ENVDIR=/etc/wal-e.d/env
 RUN mkdir -p $WALE_ENVDIR
-RUN python3 /patcher-script.py
+RUN python3 /patcher-script.py /bin/create_bucket
+RUN python3 /patcher-script.py /usr/local/bin/wal-e
 
 CMD ["/docker-entrypoint.sh", "postgres"]
 EXPOSE 5432
