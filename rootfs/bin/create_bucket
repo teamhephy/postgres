@@ -76,9 +76,11 @@ elif os.getenv('DATABASE_STORAGE') == "swift":
     conn.put_container(os.getenv('BUCKET_NAME'))
 
 else:
-    botoconfig.add_section('s3')
+    if not botoconfig.has_section("s3"):
+        botoconfig.add_section('s3')
     botoconfig.set('s3', 'use-sigv4', 'True')
-    botoconfig.add_section('Boto')
+    if not botoconfig.has_section("Boto"):
+        botoconfig.add_section('Boto')
     botoconfig.set('Boto', 'is_secure', 'False')
     conn = S3Connection(
         host=os.getenv('S3_HOST'),

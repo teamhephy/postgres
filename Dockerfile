@@ -36,8 +36,12 @@ RUN apt-get purge -y --auto-remove $BUILD_DEPS && \
 COPY rootfs /
 ENV WALE_ENVDIR=/etc/wal-e.d/env
 RUN mkdir -p $WALE_ENVDIR
-RUN python3 /patcher-script.py /bin/create_bucket
-RUN python3 /patcher-script.py /usr/local/bin/wal-e
+
+ARG PATCH_CMD="python3 /patcher-script.py"
+RUN $PATCH_CMD file /bin/create_bucket /patcher-script.d/patch_boto_s3.py
+RUN $PATCH_CMD file /usr/local/bin/wal-e /patcher-script.d/patch_boto_s3.py
+RUN $PATCH_CMD module wal_e.worker.worker_util /patcher-script.d/patch_wal_e_s3.py
+
 
 CMD ["/docker-entrypoint.sh", "postgres"]
 EXPOSE 5432
