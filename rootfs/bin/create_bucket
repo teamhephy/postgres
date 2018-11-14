@@ -20,7 +20,7 @@ def bucket_exists(conn, name):
     return True
 
 bucket_name = os.getenv('BUCKET_NAME')
-region = os.getenv('AWS_REGION')
+region = os.getenv('S3_REGION')
 
 if os.getenv('DATABASE_STORAGE') == "s3":
     conn = boto.s3.connect_to_region(region)
@@ -76,15 +76,17 @@ elif os.getenv('DATABASE_STORAGE') == "swift":
     conn.put_container(os.getenv('BUCKET_NAME'))
 
 else:
-    botoconfig.add_section('s3')
+    if not botoconfig.has_section("s3"):
+        botoconfig.add_section('s3')
     botoconfig.set('s3', 'use-sigv4', 'True')
-    botoconfig.add_section('Boto')
+    if not botoconfig.has_section("Boto"):
+        botoconfig.add_section('Boto')
     botoconfig.set('Boto', 'is_secure', 'False')
     conn = S3Connection(
         host=os.getenv('S3_HOST'),
         port=int(os.getenv('S3_PORT')),
         calling_format=OrdinaryCallingFormat())
     # HACK(bacongobbler): allow boto to connect to minio by changing the region name for s3v4 auth
-    conn.auth_region_name = os.getenv('AWS_REGION')
+    conn.auth_region_name = os.getenv('S3_REGION')
     if not bucket_exists(conn, bucket_name):
         conn.create_bucket(bucket_name)

@@ -36,7 +36,7 @@ if [[ "$DATABASE_STORAGE" == "s3" || "$DATABASE_STORAGE" == "minio" ]]; then
   else
     echo "1" > AWS_INSTANCE_PROFILE
   fi
-  echo $AWS_REGION > AWS_REGION
+  echo $AWS_REGION > S3_REGION
   echo $BUCKET_NAME > BUCKET_NAME
 elif [ "$DATABASE_STORAGE" == "gcs" ]; then
   GOOGLE_APPLICATION_CREDENTIALS="/var/run/secrets/deis/objectstore/creds/key.json"
