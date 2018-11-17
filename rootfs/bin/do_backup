@@ -5,6 +5,7 @@ export BACKUPS_TO_RETAIN=${BACKUPS_TO_RETAIN:-5}
 echo "Performing a base backup..."
 if [[ -f "$PGDATA/recovery.conf" ]] ; then
     echo "Database is currently recovering from a backup. Aborting"
+    sleep 9
 else
     # perform a backup
     envdir "$WALE_ENVDIR" wal-e backup-push "$PGDATA"

@@ -53,19 +53,7 @@ EOF
   su-exec postgres pg_ctl -D "$PGDATA" \
       -o "-c listen_addresses=''" \
       -w start
-
-  echo "Waiting for recovery completion..."
-  while [ ! -f "$PGDATA/recovery.done" ]
-  do
-    sleep 2
-  done
-  su-exec postgres pg_ctl -D "$PGDATA" \
-      -o "-c listen_addresses=''" \
-      -w restart
 fi
-
-echo "Performing an initial backup..."
-su-exec postgres envdir "$WALE_ENVDIR" wal-e backup-push "$PGDATA"
 
 # ensure $PGDATA has the right permissions
 chown -R postgres:postgres "$PGDATA"

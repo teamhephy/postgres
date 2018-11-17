@@ -16,6 +16,7 @@ RUN mkdir -p $WALE_ENVDIR \
            lzo \
            pv \
            util-linux \
+           ca-certificates \
            python3=3.5.6-r0 \
     && pip3 install --upgrade pip setuptools \
     && pip install  --disable-pip-version-check --no-cache-dir \
