@@ -45,7 +45,7 @@ spec:
             preStop:
               exec:
                 command:
-                  - gosu
+                  - su-exec
                   - postgres
                   - do_backup
           readinessProbe:
