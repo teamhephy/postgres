@@ -17,6 +17,11 @@ if [[ "$DATABASE_STORAGE" == "s3" || "$DATABASE_STORAGE" == "minio" ]]; then
     else
       echo "https+path://s3-${AWS_REGION}.amazonaws.com:443" > WALE_S3_ENDPOINT
     fi
+    if [[ $S3_SSE ]]; then
+      echo $S3_SSE > WALE_S3_SSE
+    else
+      echo "false" > WALE_S3_SSE
+    fi
   else
     AWS_REGION="us-east-1"
     BUCKET_NAME="dbwal"

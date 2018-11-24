@@ -7,10 +7,10 @@ def patch_uri_put_file():
         k = s3_util._uri_to_key(creds, uri, conn=conn)
         if content_type is not None:
             k.content_type = content_type
+        encrypt_key = False
         if os.getenv('DATABASE_STORAGE') == 's3':
-            encrypt_key=True
-        else:
-            encrypt_key=False
+            if os.getenv('WALE_S3_SSE', 'false') == 'true':
+                encrypt_key = True
         k.set_contents_from_file(fp, encrypt_key=encrypt_key)
         return k
     s3.uri_put_file = wrap_uri_put_file
