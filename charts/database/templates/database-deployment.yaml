@@ -43,7 +43,7 @@ spec:
               value: "{{.Values.postgres.timeout}}"
 {{- if eq .Values.global.storage "s3" }}
             - name: S3_SSE
-              value: "{{.Values.s3.use_sse}}"
+              value: "{{.Values.global.s3.use_sse}}"
 {{- end}}
           lifecycle:
             preStop:
