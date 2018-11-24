@@ -3,7 +3,7 @@
 # - Docker image name
 # - Kubernetes service, rc, pod, secret, volume names
 SHORT_NAME := postgres
-DEIS_REGISTY ?= ${DEV_REGISTRY}/
+DEIS_REGISTRY ?= ${DEV_REGISTRY}/
 IMAGE_PREFIX ?= deis
 
 include versioning.mk
