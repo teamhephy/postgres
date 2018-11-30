@@ -1,4 +1,4 @@
-FROM postgres:11-alpine
+FROM postgres:9.4-alpine
 
 ENV WALE_LOG_DESTINATION stderr
 ENV WALE_ENVDIR /etc/wal-e.d/env
