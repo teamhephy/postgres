@@ -1,9 +1,10 @@
-FROM postgres:9.4-alpine
+FROM postgres:11-alpine
 
 ENV WALE_LOG_DESTINATION stderr
 ENV WALE_ENVDIR /etc/wal-e.d/env
+ENV PGDATA_RECOVERY /var/lib/postgresql/recovery
 
-RUN mkdir -p $WALE_ENVDIR \
+RUN mkdir -p $WALE_ENVDIR $PGDATA_RECOVERY \
     && echo 'http://dl-cdn.alpinelinux.org/alpine/v3.5/main' >> /etc/apk/repositories \
     && apk add --update --virtual .build-deps \
            git \
@@ -30,6 +31,8 @@ RUN mkdir -p $WALE_ENVDIR \
     && rm -rf /var/cache/apk/*
 
 COPY rootfs /
+
+VOLUME /var/lib/postgresql/recovery
 
 ARG PATCH_CMD="python3 /patcher-script.py"
 RUN $PATCH_CMD file /bin/create_bucket /patcher-script.d/patch_boto_s3.py
