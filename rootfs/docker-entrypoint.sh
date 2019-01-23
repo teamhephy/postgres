@@ -14,9 +14,9 @@ POSTGRES_USER="$(cat /var/run/secrets/deis/database/creds/user)"
 POSTGRES_PASSWORD="$(cat /var/run/secrets/deis/database/creds/password)"
 
 if [ "$1" = 'postgres' ]; then
-	mkdir -p "$PGDATA"
-	chmod 700 "$PGDATA"
-	chown -R postgres "$PGDATA"
+	mkdir -p "$PGDATA" "$PGDATA_RECOVERY"
+	chmod 700 "$PGDATA" "$PGDATA_RECOVERY"
+	chown -R postgres "$PGDATA"  "$PGDATA_RECOVERY"
 
 	chmod g+s /run/postgresql
 	chown -R postgres /run/postgresql
@@ -57,7 +57,23 @@ if [ "$1" = 'postgres' ]; then
 		su-exec postgres pg_ctl -D "$PGDATA" \
 			-o "-c listen_addresses=''" \
 			-w start
+		echo
 
+		echo
+		for f in /docker-entrypoint-initdb.d/*; do
+			case "$f" in
+				*.sh)  echo "$0: running $f"; . "$f" ;;
+				*.sql)
+					echo "$0: running $f";
+					psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" --dbname "$POSTGRES_DB" < "$f"
+					echo
+					;;
+				*)     echo "$0: ignoring $f" ;;
+			esac
+			echo
+		done
+
+		echo
 		: ${POSTGRES_USER:=postgres}
 		: ${POSTGRES_DB:=$POSTGRES_USER}
 		export POSTGRES_USER POSTGRES_DB
@@ -80,26 +96,20 @@ if [ "$1" = 'postgres' ]; then
 		EOSQL
 		echo
 
-		echo
-		for f in /docker-entrypoint-initdb.d/*; do
-			case "$f" in
-				*.sh)  echo "$0: running $f"; . "$f" ;;
-				*.sql)
-					echo "$0: running $f";
-					psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" --dbname "$POSTGRES_DB" < "$f"
-					echo
-					;;
-				*)     echo "$0: ignoring $f" ;;
-			esac
-			echo
-		done
-
 		su-exec postgres pg_ctl -D "$PGDATA" -m fast -w stop
 		set_listen_addresses '*'
 
 		echo
 		echo 'PostgreSQL init process complete; ready for start up.'
 		echo
+	else
+		POSTGRES_OLD_VERSION=$(cat $PGDATA/PG_VERSION)
+		if [ "$POSTGRES_OLD_VERSION" != "$PG_MAJOR" ] ; then
+		 	su-exec postgres cp -rf "$PGDATA"/* "$PGDATA_RECOVERY"
+		 	su-exec postgres rm -rf "$PGDATA"/*
+		 	su-exec postgres initdb
+		 	do_upgrade "$PGDATA_RECOVERY" "$PGDATA"
+		fi
 	fi
 
 	exec su-exec postgres "$@"

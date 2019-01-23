@@ -1,0 +1,57 @@
+#!/usr/bin/env bash
+
+POSTGRES_OLD_VERSION=$(cat "$1"/PG_VERSION)
+
+install-old-postgres() {
+  if [ "$POSTGRES_OLD_VERSION" == "9.4" ];then
+    echo 'http://dl-cdn.alpinelinux.org/alpine/v3.3/main' >> /etc/apk/repositories    
+    apk add --update --virtual .upgrade-deps postgresql=9.4.15-r0
+  elif [ "$POSTGRES_OLD_VERSION" == "9.5" ];then
+    echo 'http://dl-cdn.alpinelinux.org/alpine/v3.4/main' >> /etc/apk/repositories
+    apk add --update --virtual .upgrade-deps postgresql=9.5.13-r0
+  elif [ "$POSTGRES_OLD_VERSION" == "9.6" ];then
+    echo 'http://dl-cdn.alpinelinux.org/alpine/v3.6/main' >> /etc/apk/repositories
+    apk add --update --virtual .upgrade-deps postgresql=9.6.10-r0
+  elif [ "$POSTGRES_OLD_VERSION" == "10" ];then
+    echo 'http://dl-cdn.alpinelinux.org/alpine/v3.8/main' >> /etc/apk/repositories
+    apk add --update --virtual .upgrade-deps postgresql=10.5-r0                             
+  else
+    echo "Upgrading from ${POSTGRES_OLD_VERSION} is not supported"
+    exit 1
+  fi
+}
+
+remove-old-postgres() {
+  apk del .upgrade-deps
+}
+
+if [ "$POSTGRES_OLD_VERSION" != "$PG_MAJOR" ] ; then
+  echo
+  echo 'PostgreSQL executing the pg_upgrade script.'
+  echo
+
+  cd /tmp||exit
+  install-old-postgres
+
+  su-exec postgres /usr/bin/pg_ctl \
+    -D "$1" \
+    -o "-c listen_addresses=''" \
+    -w start
+
+  su-exec postgres /usr/bin/pg_ctl \
+    -D "$1" \
+    -w stop
+
+  su-exec postgres pg_upgrade \
+    --old-datadir="$1" \
+    --new-datadir="$2" \
+    --old-bindir=/usr/bin \
+    --new-bindir=/usr/local/bin
+
+  remove-old-postgres
+  rm -rf /var/cache/apk/*
+
+  echo
+  echo 'PostgreSQL upgrade process complete; ready for start up.'
+  echo
+fi

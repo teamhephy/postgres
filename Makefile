@@ -8,7 +8,7 @@ IMAGE_PREFIX ?= deis
 
 include versioning.mk
 
-SHELL_SCRIPTS = $(wildcard _scripts/*.sh contrib/ci/*.sh rootfs/bin/*backup) rootfs/bin/is_running
+SHELL_SCRIPTS = $(wildcard _scripts/*.sh contrib/ci/*.sh rootfs/bin/*backup rootfs/bin/do_upgrade) rootfs/bin/is_running
 
 # The following variables describe the containerized development environment
 # and other build options
@@ -30,7 +30,10 @@ test: test-style test-functional
 test-style:
 	${DEV_ENV_CMD} shellcheck $(SHELL_SCRIPTS)
 
-test-functional: test-functional-swift test-functional-minio
+test-functional: test-functional-upgrade test-functional-swift test-functional-minio
+
+test-functional-upgrade:
+	contrib/ci/test-upgrade.sh ${IMAGE}
 
 test-functional-minio:
 	contrib/ci/test-minio.sh ${IMAGE}
