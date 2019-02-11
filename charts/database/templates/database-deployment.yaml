@@ -22,7 +22,7 @@ spec:
       serviceAccount: deis-database
       containers:
         - name: deis-database
-          image: quay.io/{{.Values.org}}/postgres:{{.Values.docker_tag}}
+          image: {{.Values.org}}/postgres:{{.Values.docker_tag}}
           imagePullPolicy: {{.Values.pull_policy}}
           ports:
             - containerPort: 5432
