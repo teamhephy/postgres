@@ -1,0 +1,12 @@
+{{/*
+Set apiVersion based on .Capabilities.APIVersions
+*/}}
+{{- define "APIVersion" -}}
+{{- if .Capabilities.APIVersions.Has "apps/v1" -}}
+apps/v1
+{{- else if .Capabilities.APIVersions.Has "extensions/v1beta1" -}}
+extensions/v1beta1
+{{- else -}}
+apps/v1
+{{- end -}}
+{{- end -}}
