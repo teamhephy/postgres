@@ -46,7 +46,7 @@ MINIO_JOB=$(docker run -d \
   -v "${CURRENT_DIR}"/tmp/aws-admin:/var/run/secrets/deis/minio/admin \
   -v "${CURRENT_DIR}"/tmp/aws-user:/var/run/secrets/deis/minio/user \
   -v "${CURRENT_DIR}"/tmp/k8s:/var/run/secrets/kubernetes.io/serviceaccount \
-  quay.io/deisci/minio:canary boot server /home/minio/)
+  hephy/minio:latest boot server /home/minio/)
 
 # boot postgres, linking the minio container and setting DEIS_MINIO_SERVICE_HOST and DEIS_MINIO_SERVICE_PORT
 PG_CMD="docker run -d --link ${MINIO_JOB}:minio -e PGCTLTIMEOUT=1200 \

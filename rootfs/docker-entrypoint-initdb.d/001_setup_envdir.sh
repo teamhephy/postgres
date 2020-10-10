@@ -45,9 +45,11 @@ elif [ "$DATABASE_STORAGE" == "gcs" ]; then
   echo $GOOGLE_APPLICATION_CREDENTIALS > GOOGLE_APPLICATION_CREDENTIALS
   echo $BUCKET_NAME > BUCKET_NAME
 elif [ "$DATABASE_STORAGE" == "azure" ]; then
+  AZURE_STORAGE_CONNECTION_STRING=$(cat /var/run/secrets/deis/objectstore/creds/azure-storage-conn-string)
   WABS_ACCOUNT_NAME=$(cat /var/run/secrets/deis/objectstore/creds/accountname)
   WABS_ACCESS_KEY=$(cat /var/run/secrets/deis/objectstore/creds/accountkey)
   BUCKET_NAME=$(cat /var/run/secrets/deis/objectstore/creds/database-container)
+  echo $AZURE_STORAGE_CONNECTION_STRING > AZURE_STORAGE_CONNECTION_STRING
   echo $WABS_ACCOUNT_NAME > WABS_ACCOUNT_NAME
   echo $WABS_ACCESS_KEY > WABS_ACCESS_KEY
   echo "wabs://$BUCKET_NAME" > WALE_WABS_PREFIX
