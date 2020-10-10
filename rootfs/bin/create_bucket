@@ -11,13 +11,15 @@ from boto.s3.connection import S3Connection, OrdinaryCallingFormat
 from oauth2client.service_account import ServiceAccountCredentials
 from gcloud.storage.client import Client
 from gcloud import exceptions
-from azure.storage.blob import BlobService
+from azure.storage.blob import BlobServiceClient
+
 
 def bucket_exists(conn, name):
     bucket = conn.lookup(name)
     if not bucket:
         return False
     return True
+
 
 bucket_name = os.getenv('BUCKET_NAME')
 region = os.getenv('S3_REGION')
@@ -37,7 +39,8 @@ if os.getenv('DATABASE_STORAGE') == "s3":
         # TODO(bacongobbler): deprecate this once we drop support for v2.8.0 and lower
         except S3CreateError as err:
             if region != 'us-east-1':
-                print('Failed to create bucket in {}. We are now assuming that the bucket was created in us-east-1.'.format(region))
+                print(
+                    'Failed to create bucket in {}. We are now assuming that the bucket was created in us-east-1.'.format(region))
                 with open(os.path.join(os.environ['WALE_ENVDIR'], "WALE_S3_ENDPOINT"), "w+") as file:
                     file.write('https+path://s3.amazonaws.com:443')
             else:
@@ -45,7 +48,8 @@ if os.getenv('DATABASE_STORAGE') == "s3":
 
 elif os.getenv('DATABASE_STORAGE') == "gcs":
     scopes = ['https://www.googleapis.com/auth/devstorage.full_control']
-    credentials = ServiceAccountCredentials.from_json_keyfile_name(os.getenv('GOOGLE_APPLICATION_CREDENTIALS'), scopes=scopes)
+    credentials = ServiceAccountCredentials.from_json_keyfile_name(
+        os.getenv('GOOGLE_APPLICATION_CREDENTIALS'), scopes=scopes)
     with open(os.getenv('GOOGLE_APPLICATION_CREDENTIALS')) as data_file:
         data = json.load(data_file)
     conn = Client(credentials=credentials, project=data['project_id'])
@@ -59,10 +63,12 @@ elif os.getenv('DATABASE_STORAGE') == "gcs":
     if not exists:
         conn.create_bucket(bucket_name)
 
+# WIP: Currently broken and needs to be update using the new BlobServiceClient
 elif os.getenv('DATABASE_STORAGE') == "azure":
-    conn = BlobService(account_name=os.getenv('WABS_ACCOUNT_NAME'), account_key=os.getenv('WABS_ACCESS_KEY'))
-    #It doesn't throw an exception if the container exists by default(https://github.com/Azure/azure-storage-python/blob/master/azure/storage/blob/baseblobservice.py#L504).
-    conn.create_container(bucket_name)
+    connection_string = os.getenv("AZURE_STORAGE_CONNECTION_STRING")
+    azure_blob_service_client = BlobServiceClient.from_connection_string(connection_string)
+
+    azure_blob_service_client.create_container(bucket_name)
 
 elif os.getenv('DATABASE_STORAGE') == "swift":
     conn = swiftclient.Connection(
