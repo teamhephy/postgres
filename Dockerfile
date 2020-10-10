@@ -5,28 +5,28 @@ ENV WALE_ENVDIR /etc/wal-e.d/env
 ENV PGDATA_RECOVERY /var/lib/postgresql/recovery
 
 RUN mkdir -p $WALE_ENVDIR $PGDATA_RECOVERY \
-    && echo 'http://dl-cdn.alpinelinux.org/alpine/v3.5/main' >> /etc/apk/repositories \
     && apk add --update --virtual .build-deps \
            git \
            build-base \
-           libffi-dev \
            openssl-dev \
-           python3-dev=3.5.6-r0 \
+           libffi-dev \
+           python3-dev \
            linux-headers \
     && apk add \
            lzo \
            pv \
            util-linux \
            ca-certificates \
-           python3=3.5.6-r0 \
+           python3 \
+           py-pip \
     && pip3 install --upgrade pip setuptools \
     && pip install  --disable-pip-version-check --no-cache-dir \
-           psycopg2-binary==2.7.6.1 \
+           psycopg2-binary==2.8.4 \
            envdir==1.0.1 \
-           wal-e[aws,azure,google,swift]==1.1.0 \
+           wal-e[aws,azure,google,swift]==1.1.1 \
            gcloud==0.18.3 \
            oauth2client==4.1.3 \
-           azure-storage==0.20.0 \
+           azure-storage-blob==12.5.0 \
     && apk del .build-deps \
     && rm -rf /var/cache/apk/*
 
