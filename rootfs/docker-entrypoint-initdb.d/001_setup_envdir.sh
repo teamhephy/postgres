@@ -6,6 +6,7 @@ if [[ "$DATABASE_STORAGE" == "s3" || "$DATABASE_STORAGE" == "minio" ]]; then
   AWS_ACCESS_KEY_ID=$(cat /var/run/secrets/deis/objectstore/creds/accesskey)
   AWS_SECRET_ACCESS_KEY=$(cat /var/run/secrets/deis/objectstore/creds/secretkey)
   if [[ "$DATABASE_STORAGE" == "s3" ]]; then
+    S3_SSE=$(cat /var/run/secrets/deis/objectstore/creds/sse)
     AWS_REGION=$(cat /var/run/secrets/deis/objectstore/creds/region)
     BUCKET_NAME=$(cat /var/run/secrets/deis/objectstore/creds/database-bucket)
     # Convert $AWS_REGION into $WALE_S3_ENDPOINT to avoid "Connection reset by peer" from
@@ -17,6 +18,7 @@ if [[ "$DATABASE_STORAGE" == "s3" || "$DATABASE_STORAGE" == "minio" ]]; then
     else
       echo "https+path://s3-${AWS_REGION}.amazonaws.com:443" > WALE_S3_ENDPOINT
     fi
+    echo $S3_SSE > WALE_S3_SSE
   else
     AWS_REGION="us-east-1"
     BUCKET_NAME="dbwal"
