@@ -123,7 +123,7 @@ kill-containers "${PG_JOB}"
 test-upgrade-from postgres:11-alpine
 kill-containers "${PG_JOB}"
 
-test-upgrade-from-wal hephy/postgres:v2.7.1
+test-upgrade-from-wal hephy/postgres:v2.7.5
 
 puts-step "tests PASSED!"
 exit 0

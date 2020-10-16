@@ -11,7 +11,7 @@ from boto.s3.connection import S3Connection, OrdinaryCallingFormat
 from oauth2client.service_account import ServiceAccountCredentials
 from gcloud.storage.client import Client
 from gcloud import exceptions
-from azure.storage.blob import BlobServiceClient
+from azure.storage.blob import BlockBlobService
 
 
 def bucket_exists(conn, name):
@@ -63,12 +63,11 @@ elif os.getenv('DATABASE_STORAGE') == "gcs":
     if not exists:
         conn.create_bucket(bucket_name)
 
-# WIP: Currently broken and needs to be update using the new BlobServiceClient
+# WIP: Needs to be updated to use new client version and new auth method with azure_storage_conn_string at some point
+# Currently pegged to the wal-e azure client and blob-storage versions in Dockerfile
 elif os.getenv('DATABASE_STORAGE') == "azure":
-    connection_string = os.getenv("AZURE_STORAGE_CONNECTION_STRING")
-    azure_blob_service_client = BlobServiceClient.from_connection_string(connection_string)
-
-    azure_blob_service_client.create_container(bucket_name)
+    conn = BlockBlobService(account_name=os.getenv('WABS_ACCOUNT_NAME'), account_key=os.getenv('WABS_ACCESS_KEY'))
+    conn.create_container(bucket_name)
 
 elif os.getenv('DATABASE_STORAGE') == "swift":
     conn = swiftclient.Connection(
