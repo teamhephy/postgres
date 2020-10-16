@@ -19,14 +19,15 @@ RUN mkdir -p $WALE_ENVDIR $PGDATA_RECOVERY \
            ca-certificates \
            python3 \
            py-pip \
-    && pip3 install --upgrade pip setuptools \
+    && pip3 install --upgrade pip setuptools wheel \
     && pip install  --disable-pip-version-check --no-cache-dir \
            psycopg2-binary==2.8.4 \
            envdir==1.0.1 \
            wal-e[aws,azure,google,swift]==1.1.1 \
            gcloud==0.18.3 \
            oauth2client==4.1.3 \
-           azure-storage-blob==12.5.0 \
+           azure==3.0.0 \
+           azure-storage-blob==1.1.0 \
     && apk del .build-deps \
     && rm -rf /var/cache/apk/*
 
