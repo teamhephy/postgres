@@ -1,6 +1,6 @@
 org: "hephy"
-pull_policy: "Always"
-docker_tag: canary
+pull_policy: "IfNotPresent"
+docker_tag: v2.7.6
 # limits_cpu: "100m"
 # limits_memory: "50Mi"
 # The username and password to be used by the on-cluster database.
