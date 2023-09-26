@@ -1,9 +1,11 @@
+apiVersion: v2
 name: database
 home: https://github.com/teamhephy/postgres
-version: <Will be populated by the ci before publishing the chart>
+version: 2.7.8
 description: A PostgreSQL database used by Hephy Workflow.
 keywords:
   - database
   - postgres
 maintainers:
-  - email: team@teamhephy.com
+- name: Team Hephy
+  email: team@teamhephy.com
